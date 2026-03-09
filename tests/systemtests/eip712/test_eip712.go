@@ -56,7 +56,7 @@ func RunEIP712BankSendWithBalanceCheck(t *testing.T, base *suite.BaseTestSuite) 
 
 	signer := s.Acc(0)
 
-	denom := "atest"
+	denom := "abre"
 
 	// Get accounts
 	fromAddr := signer.Cosmos.AccAddress
@@ -129,7 +129,7 @@ func RunEIP712MultipleBankSends(t *testing.T, base *suite.BaseTestSuite) {
 
 	signer := s.Acc(0)
 
-	denom := "atest"
+	denom := "abre"
 	toAddr := s.Acc(1).Cosmos.AccAddress
 
 	// Get initial balance

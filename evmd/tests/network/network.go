@@ -122,8 +122,8 @@ func DefaultConfig() Config {
 		TimeoutCommit:     3 * time.Second,
 		ChainID:           chainID,
 		NumValidators:     4,
-		BondDenom:         testconstants.ExampleAttoDenom,
-		MinGasPrices:      fmt.Sprintf("0.000006%s", testconstants.ExampleAttoDenom),
+		BondDenom:         "atabb",
+		MinGasPrices:      fmt.Sprintf("0.000006%s", "abre"),
 		AccountTokens:     sdk.TokensFromConsensusPower(1000000000000000000, utils.AttoPowerReduction),
 		StakingTokens:     sdk.TokensFromConsensusPower(500000000000000000, utils.AttoPowerReduction),
 		BondedTokens:      sdk.TokensFromConsensusPower(100000000000000000, utils.AttoPowerReduction),
@@ -413,6 +413,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 
 		balances := sdk.NewCoins(
 			sdk.NewCoin(fmt.Sprintf("%stoken", nodeDirName), cfg.AccountTokens),
+			sdk.NewCoin("abre", cfg.AccountTokens),
 			sdk.NewCoin(cfg.BondDenom, cfg.StakingTokens),
 		)
 

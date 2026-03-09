@@ -15,7 +15,7 @@ import (
 )
 
 func (s *TestSuite) TestCheckBalances() {
-	testDenom := "atest"
+	testDenom := "abre"
 	keyring := testkeyring.New(1)
 	address := keyring.GetAccAddr(0).String()
 

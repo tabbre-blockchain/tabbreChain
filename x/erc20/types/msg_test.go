@@ -132,7 +132,7 @@ func (suite *MsgsTestSuite) TestMsgConvertERC20() {
 func (suite *MsgsTestSuite) TestMsgConvertCoinGetters() {
 	msg := types.NewMsgConvertCoin(
 		sdk.NewCoin(
-			"atest",
+			"abre",
 			math.NewInt(100),
 		),
 		utiltx.GenerateAddress(),
@@ -153,7 +153,7 @@ func (suite *MsgsTestSuite) TestNewMsgConvertCoin() {
 	}{
 		{
 			"msg convert coin - pass",
-			"atest",
+			"abre",
 			math.NewInt(100),
 			utiltx.GenerateAddress().String(),
 			sdk.AccAddress(utiltx.GenerateAddress().Bytes()).String(),
@@ -192,7 +192,7 @@ func (suite *MsgsTestSuite) TestMsgConvertCoin() {
 		},
 		{
 			"cannot mint a non-positive amount",
-			"atest",
+			"abre",
 			math.NewInt(-100),
 			sdk.AccAddress(utiltx.GenerateAddress().Bytes()).String(),
 			utiltx.GenerateAddress().String(),
@@ -200,7 +200,7 @@ func (suite *MsgsTestSuite) TestMsgConvertCoin() {
 		},
 		{
 			"invalid sender address",
-			"atest",
+			"abre",
 			math.NewInt(100),
 			utiltx.GenerateAddress().String(),
 			sdk.AccAddress{}.String(),
@@ -208,7 +208,7 @@ func (suite *MsgsTestSuite) TestMsgConvertCoin() {
 		},
 		{
 			"invalid receiver hex address",
-			"atest",
+			"abre",
 			math.NewInt(100),
 			"not_a_hex_address",
 			sdk.AccAddress(utiltx.GenerateAddress().Bytes()).String(),
@@ -216,7 +216,7 @@ func (suite *MsgsTestSuite) TestMsgConvertCoin() {
 		},
 		{
 			"msg convert coin - pass",
-			"atest",
+			"abre",
 			math.NewInt(100),
 			utiltx.GenerateAddress().String(),
 			sdk.AccAddress(utiltx.GenerateAddress().Bytes()).String(),
