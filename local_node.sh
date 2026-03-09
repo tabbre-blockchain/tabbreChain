@@ -251,9 +251,10 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 
   jq '.app_state["evm"]["params"]["active_static_precompiles"]=["0x0000000000000000000000000000000000000100","0x0000000000000000000000000000000000000400","0x0000000000000000000000000000000000000800","0x0000000000000000000000000000000000000801","0x0000000000000000000000000000000000000802","0x0000000000000000000000000000000000000803","0x0000000000000000000000000000000000000804","0x0000000000000000000000000000000000000805", "0x0000000000000000000000000000000000000806", "0x0000000000000000000000000000000000000807"]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
-  # Only wrap BRE in ERC20
+  # Wrap BRE and TABB in ERC20
   jq '.app_state.erc20.native_precompiles=["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state.erc20.token_pairs=[{contract_owner:1,erc20_address:"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",denom:"abre",enabled:true}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+  jq '.app_state.erc20.dynamic_precompiles=["0x1111111111111111111111111111111111111111"]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+  jq '.app_state.erc20.token_pairs=[{contract_owner:1,erc20_address:"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",denom:"abre",enabled:true},{contract_owner:1,erc20_address:"0x1111111111111111111111111111111111111111",denom:"atabb",enabled:true}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
   jq '.consensus.params.block.max_gas="10000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
@@ -282,7 +283,8 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
   sed -i.bak 's/enabled = false/enabled = true/g' "$APP_TOML"
   sed -i.bak 's/enable = false/enable = true/g' "$APP_TOML"
   sed -i.bak 's/enable-indexer = false/enable-indexer = true/g' "$APP_TOML"
-
+  sed -i.bak 's/address = "127.0.0.1:8545"/address = "0.0.0.0:8545"/g' "$APP_TOML"
+  sed -i.bak 's/ws-address = "127.0.0.1:8546"/ws-address = "0.0.0.0:8546"/g' "$APP_TOML"
   # --------- maybe generate additional users ---------
   # start with provided/default list
   final_mnemonics=("${dev_mnemonics[@]}")
