@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/evm/tests/systemtests/accountabstraction"
 	"github.com/cosmos/evm/tests/systemtests/chainupgrade"
+	"github.com/cosmos/evm/tests/systemtests/dualtoken"
 	"github.com/cosmos/evm/tests/systemtests/eip712"
 
 	"github.com/cosmos/evm/tests/systemtests/mempool"
@@ -77,4 +78,11 @@ func TestAccountAbstractionEIP7702(t *testing.T) {
  */
 func TestChainUpgrade(t *testing.T) {
 	suite.RunWithSharedSuite(t, chainupgrade.RunChainUpgrade)
+}
+
+/*
+* Dual-Token Economics Tests
+ */
+func TestDualTokenIntegration(t *testing.T) {
+	suite.RunWithSharedSuite(t, dualtoken.RunDualTokenTests)
 }
