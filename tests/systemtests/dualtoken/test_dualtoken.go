@@ -33,12 +33,11 @@ func RunDualTokenTests(t *testing.T, base *suite.BaseTestSuite) {
 		to := toAcc.AccAddress.String()
 
 		// 1. Transaction trying to pay fees in TABB should be rejected 
-		// (min-gas-prices requires abre)
-		rsp := cli.Run("tx", "bank", "send", from, to, "1abre", "--from="+from, "--fees=10atabb", "--gas=auto", "--gas-adjustment=1.5", "-y")
-		require.Contains(t, rsp, "insufficient fees")
+		// (min-gas-prices requires abre). The ante handler drops it before block commit.
+		cli.WithRunErrorsIgnored().WithAssertTXUncommitted().Run("tx", "bank", "send", from, to, "1abre", "--from="+from, "--gas-prices=1000000000atabb", "--gas=auto", "--gas-adjustment=1.5", "-y")
 
 		// 2. Exact same transaction paying fees in BRE should succeed
-		rsp = cli.Run("tx", "bank", "send", from, to, "1abre", "--from="+from, "--fees=1000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
+		rsp := cli.Run("tx", "bank", "send", from, to, "1abre", "--from="+from, "--gas-prices=1000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
 		systest.RequireTxSuccess(t, rsp)
 	})
 
@@ -51,11 +50,11 @@ func RunDualTokenTests(t *testing.T, base *suite.BaseTestSuite) {
 		require.NotEmpty(t, valAddr)
 
 		// 1. Cannot bond BRE
-		rsp := cli.Run("tx", "staking", "delegate", valAddr, "100abre", "--from="+from, "--fees=1000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
+		rsp, _ := cli.WithRunErrorsIgnored().RunOnly("tx", "staking", "delegate", valAddr, "100abre", "--from="+from, "--gas-prices=1000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
 		require.Contains(t, rsp, "invalid coin denomination")
 
 		// 2. Can bond TABB (while paying fees in BRE)
-		rsp = cli.Run("tx", "staking", "delegate", valAddr, "100atabb", "--from="+from, "--fees=1000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
+		rsp = cli.Run("tx", "staking", "delegate", valAddr, "100atabb", "--from="+from, "--gas-prices=1000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
 		systest.RequireTxSuccess(t, rsp)
 	})
 
