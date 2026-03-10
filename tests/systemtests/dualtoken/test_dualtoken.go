@@ -34,10 +34,10 @@ func RunDualTokenTests(t *testing.T, base *suite.BaseTestSuite) {
 
 		// 1. Transaction trying to pay fees in TABB should be rejected 
 		// (min-gas-prices requires abre). The ante handler drops it before block commit.
-		cli.WithRunErrorsIgnored().WithAssertTXUncommitted().Run("tx", "bank", "send", from, to, "1abre", "--from="+from, "--gas-prices=1000000000atabb", "--gas=auto", "--gas-adjustment=1.5", "-y")
+		cli.WithRunErrorsIgnored().WithAssertTXUncommitted().Run("tx", "bank", "send", from, to, "1abre", "--from="+from, "--fees=400000000000000atabb", "--gas=auto", "--gas-adjustment=1.5", "-y")
 
 		// 2. Exact same transaction paying fees in BRE should succeed
-		rsp := cli.Run("tx", "bank", "send", from, to, "1abre", "--from="+from, "--gas-prices=1000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
+		rsp := cli.Run("tx", "bank", "send", from, to, "1abre", "--from="+from, "--fees=400000000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
 		systest.RequireTxSuccess(t, rsp)
 	})
 
@@ -50,24 +50,24 @@ func RunDualTokenTests(t *testing.T, base *suite.BaseTestSuite) {
 		require.NotEmpty(t, valAddr)
 
 		// 1. Cannot bond BRE
-		rsp, _ := cli.WithRunErrorsIgnored().RunOnly("tx", "staking", "delegate", valAddr, "100abre", "--from="+from, "--gas-prices=1000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
+		rsp, _ := cli.WithRunErrorsIgnored().RunOnly("tx", "staking", "delegate", valAddr, "100abre", "--from="+from, "--fees=400000000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
 		require.Contains(t, rsp, "invalid coin denomination")
 
 		// 2. Can bond TABB (while paying fees in BRE)
-		rsp = cli.Run("tx", "staking", "delegate", valAddr, "100atabb", "--from="+from, "--gas-prices=1000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
+		rsp = cli.Run("tx", "staking", "delegate", valAddr, "100atabb", "--from="+from, "--fees=400000000000000abre", "--gas=auto", "--gas-adjustment=1.5", "-y")
 		systest.RequireTxSuccess(t, rsp)
 	})
 
 	t.Run("Test Supply Integrity", func(t *testing.T) {
 		// Query current total supply of TABB
-		rawSupplyInitial := cli.CustomQuery("q", "bank", "total", "--denom=atabb", "--output=json")
+		rawSupplyInitial := cli.CustomQuery("q", "bank", "total-supply-of", "atabb", "--output=json")
 		amountInitial := gjson.Get(rawSupplyInitial, "amount").String()
 		require.NotEmpty(t, amountInitial)
 
 		// Wait for a few blocks to ensure zero inflation
 		sut.AwaitNBlocks(t, 2)
 
-		rawSupplyFinal := cli.CustomQuery("q", "bank", "total", "--denom=atabb", "--output=json")
+		rawSupplyFinal := cli.CustomQuery("q", "bank", "total-supply-of", "atabb", "--output=json")
 		amountFinal := gjson.Get(rawSupplyFinal, "amount").String()
 		
 		require.Equal(t, amountInitial, amountFinal, "TABB total supply inflated over blocks!")
@@ -86,7 +86,7 @@ func RunDualTokenTests(t *testing.T, base *suite.BaseTestSuite) {
 		balInitial, err := cliEVM.BalanceAt(ctx, acc0.Address, nil)
 		require.NoError(t, err)
 
-                base.SendTx(t, "node0", "acc0", 0, base.GasPriceMultiplier(2), big.NewInt(100))
+		base.SendTx(t, "node0", "acc0", 0, big.NewInt(2000000000), big.NewInt(100))
 
 		sut.AwaitNBlocks(t, 2)
 
